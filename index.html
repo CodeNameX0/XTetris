@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>테트리스 해커 도구</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #00ff41;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px #00ff41;
+            margin-bottom: 30px;
+        }
+        
+        .method {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 4px solid #00ff41;
+        }
+        
+        .method h3 {
+            color: #00ff41;
+            margin-top: 0;
+        }
+        
+        .code-block {
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            padding: 45px 20px 20px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            border: 1px solid #333;
+            position: relative;
+            min-height: 120px;
+            font-size: 13px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        #scriptContent {
+            color: #f8f8f2;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .code-content {
+            color: #f8f8f2;
+        }
+        
+        .keyword {
+            color: #ff79c6;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 121, 198, 0.3);
+        }
+        
+        .string {
+            color: #f1fa8c;
+            text-shadow: 0 0 5px rgba(241, 250, 140, 0.2);
+        }
+        
+        .comment {
+            color: #6272a4;
+            font-style: italic;
+            opacity: 0.8;
+        }
+        
+        .function {
+            color: #50fa7b;
+            font-weight: 500;
+            text-shadow: 0 0 5px rgba(80, 250, 123, 0.2);
+        }
+        
+        .number {
+            color: #bd93f9;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(189, 147, 249, 0.3);
+        }
+        
+        .operator {
+            color: #ff79c6;
+            font-weight: bold;
+        }
+        
+        .property {
+            color: #8be9fd;
+            font-weight: 500;
+        }
+        
+        .bracket {
+            color: #ffb86c;
+            font-weight: bold;
+            text-shadow: 0 0 3px rgba(255, 184, 108, 0.3);
+        }
+        
+        .punctuation {
+            color: #f8f8f2;
+            opacity: 0.8;
+        }
+        
+        .bookmarklet {
+            background: #2d4a22;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+            cursor: pointer;
+            border: 2px dashed #00ff41;
+        }
+        
+        .bookmarklet:hover {
+            background: #3d5a32;
+        }
+        
+        .warning {
+            background: rgba(255, 165, 0, 0.2);
+            border: 1px solid orange;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .success {
+            background: rgba(0, 255, 65, 0.2);
+            border: 1px solid #00ff41;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #00ff41, #00cc33);
+            color: black;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(45deg, #ff4757, #ff6b7a);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: all 0.3s;
+            z-index: 10;
+            min-width: 70px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(255, 71, 87, 0.3);
+        }
+        
+        .copy-btn:hover {
+            background: linear-gradient(45deg, #ff3742, #ff5a6d);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.5);
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .game-link {
+            color: #00ff41;
+            text-decoration: none;
+        }
+        
+        .game-link:hover {
+            text-shadow: 0 0 10px #00ff41;
+        }
+        
+        .step {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 3px solid #00ff41;
+        }
+        
+        .step-number {
+            background: #00ff41;
+            color: black;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 테트리스 해커</h1>
+        
+        <div class="success">
+            <strong>목표:</strong> 화면 표시를 100009로 변경하면서 게임은 정상 플레이!
+        </div>
+        
+        <div class="method">
+            <h3>🚀 자동 해킹 스크립트</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                테트리스 게임 페이지로 이동: <a href="https://codenamex0.github.io/Tetris" target="_blank" rel="noopener" class="game-link">https://codenamex0.github.io/Tetris</a>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                F12 키를 눌러 개발자 도구 열기
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Console 탭 클릭
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                아래 코드를 복사해서 콘솔에 붙여넣고 Enter 키 누르기
+            </div>
+            
+            <div class="code-block" id="hackScript">
+                <button onclick="copyToClipboard('scriptContent')" class="copy-btn">📋 복사</button>
+                <div id="scriptContent"></div>
+            </div>
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ 주의사항:</strong>
+            <ul>
+                <li>이 도구는 교육 목적으로만 사용하세요</li>
+                <li>화면 표시만 변경되며, 게임 로직은 건드리지 않아 정상 플레이 가능합니다</li>
+                <li>게임을 새로고침하면 원래 상태로 돌아갑니다</li>
+                <li>실제 점수는 게임 플레이에 따라 정상적으로 증가합니다</li>
+            </ul>
+        </div>
+        
+        <div class="button-container">
+            <button onclick="window.open('https://codenamex0.github.io/Tetris', '_blank')">
+                🎮 테트리스 게임 열기
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 해킹 스크립트 로드
+        fetch('tetris-hacker.js')
+            .then(response => response.text())
+            .then(script => {
+                const scriptElement = document.getElementById('scriptContent');
+                scriptElement.innerHTML = highlightCode(script);
+                // 복사용으로 원본 텍스트도 저장
+                scriptElement.setAttribute('data-original', script);
+            })
+            .catch(() => {
+                // 파일을 불러올 수 없는 경우 강력한 해킹 스크립트 제공
+                const powerfulScript = `(function() {
+    console.log('🎮 테트리스 슈퍼 해커 시작!');
+    
+    let originalValues = {}; // 원본 값들을 저장
+    
+    // 1단계: 전역 변수 백업 및 감시 (게임 로직 보존)
+    const gameVars = ['score', 'lines', 'level', 'gameScore', 'gameLines', 'gameLevel'];
+    gameVars.forEach(varName => {
+        if (window[varName] !== undefined) {
+            // 원본 값 저장
+            if (!originalValues[varName]) {
+                originalValues[varName] = window[varName];
+            }
+            console.log('✅ 전역변수 발견:', varName, '=', window[varName]);
+        }
+    });
+    
+    // 2단계: DOM만 수정 (게임 로직은 건드리지 않음)
+    function hackDOMOnly() {
+        document.querySelectorAll('*').forEach(el => {
+            if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return; // 스크립트/스타일 태그 제외
+            
+            const text = el.textContent || el.innerText || '';
+            
+            // 스코어 표시만 변경 (실제 게임 변수는 건드리지 않음)
+            if (text.match(/(SCORE|Score|점수)[:\\s]*\\d+/i) && !el.querySelector('*')) {
+                // 리프 노드만 수정 (자식이 없는 요소)
+                const newText = text.replace(/(SCORE|Score|점수)([:\\s]*)\\d+/gi, '$1$2100009');
+                if (newText !== text) {
+                    el.textContent = newText;
+                    console.log('✅ 스코어 표시 해킹');
+                }
+            }
+            
+            // 라인 표시만 변경
+            if (text.match(/(LINES?|Line|라인)[:\\s]*\\d+/i) && !el.querySelector('*')) {
+                const newText = text.replace(/(LINES?|Line|라인)([:\\s]*)\\d+/gi, '$1$2100009');
+                if (newText !== text) {
+                    el.textContent = newText;
+                    console.log('✅ 라인 표시 해킹');
+                }
+            }
+            
+            // 레벨 표시만 변경
+            if (text.match(/(LEVEL|Level|레벨)[:\\s]*\\d+/i) && !el.querySelector('*')) {
+                const newText = text.replace(/(LEVEL|Level|레벨)([:\\s]*)\\d+/gi, '$1$2100009');
+                if (newText !== text) {
+                    el.textContent = newText;
+                    console.log('✅ 레벨 표시 해킹');
+                }
+            }
+        });
+    }
+    
+    // 3단계: 안전한 객체 탐색 (읽기 전용으로 표시용 값만 수정)
+    function safeObjectHack(obj, path = '', depth = 0) {
+        if (!obj || typeof obj !== 'object' || depth > 2) return;
+        
+        for (let key in obj) {
+            try {
+                // 표시용 속성만 수정 (게임 로직과 분리된 UI 요소)
+                if (key.toLowerCase().includes('display') || 
+                    key.toLowerCase().includes('text') || 
+                    key.toLowerCase().includes('label')) {
+                    
+                    if (typeof obj[key] === 'string') {
+                        // 문자열에서 숫자 부분만 교체
+                        if (obj[key].match(/(score|lines?|level)[:\\s]*\\d+/i)) {
+                            obj[key] = obj[key].replace(/\\d+/g, '100009');
+                            console.log('✅ 표시 텍스트 해킹:', path + key);
+                        }
+                    }
+                }
+                
+                // 재귀 탐색
+                safeObjectHack(obj[key], path + key + '.', depth + 1);
+            } catch(e) {
+                // 접근 불가능한 속성 무시
+            }
+        }
+    }
+    
+    // 4단계: 안전한 전역 객체 탐색
+    ['document', 'game', 'tetris', 'app'].forEach(objName => {
+        if (window[objName]) {
+            safeObjectHack(window[objName]);
+        }
+    });
+    
+    // 5단계: localStorage는 표시용만 수정 (게임 진행에 영향 없음)
+    function hackDisplayStorage() {
+        try {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.includes('display') || key.includes('show'))) {
+                    const value = localStorage.getItem(key);
+                    if (value && value.match(/\\d+/)) {
+                        localStorage.setItem(key, value.replace(/\\d+/g, '100009'));
+                        console.log('✅ 표시용 localStorage 해킹:', key);
+                    }
+                }
+            }
+        } catch(e) {}
+    }
+    
+    // 6단계: MutationObserver로 DOM 변화 감시
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                // 새로 추가되거나 변경된 요소만 해킹
+                setTimeout(() => hackDOMOnly(), 50);
+            }
+        });
+    });
+    
+    // DOM 감시 시작
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+    
+    // 초기 실행
+    hackDOMOnly();
+    hackDisplayStorage();
+    
+    // 주기적 표시 업데이트 (게임 로직은 건드리지 않음)
+    const displayUpdateInterval = setInterval(() => {
+        hackDOMOnly();
+    }, 2000);
+    
+    console.log('💀 안전 해킹 완료! 게임 플레이는 정상적으로 가능합니다.');
+    alert('💀 안전 해킹 완료!\\n화면 표시만 100009로 변경되었습니다.\\n게임은 정상적으로 플레이 가능합니다!');
+    
+    // 정리 함수 (필요시 사용)
+    window.stopTetrisHack = function() {
+        observer.disconnect();
+        clearInterval(displayUpdateInterval);
+        console.log('해킹 중지됨');
+    };
+})();`;
+                
+                const scriptElement = document.getElementById('scriptContent');
+                scriptElement.innerHTML = highlightCode(powerfulScript);
+                // 복사용으로 원본 텍스트도 저장
+                scriptElement.setAttribute('data-original', powerfulScript);
+            });
+        
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                alert('복사할 내용을 찾을 수 없습니다.');
+                return;
+            }
+            
+            // data-original 속성에서 원본 텍스트 가져오기
+            let text = element.getAttribute('data-original');
+            
+            // data-original이 없으면 textContent 사용 (HTML 태그 제거)
+            if (!text) {
+                text = element.textContent || element.innerText || '';
+            }
+            
+            text = text.trim();
+            const copyBtn = document.querySelector('.copy-btn');
+            
+            if (!text) {
+                alert('복사할 내용이 없습니다. 잠시 후 다시 시도해주세요.');
+                return;
+            }
+            
+            // 현대적인 클립보드 API 사용
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess(copyBtn);
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(text, copyBtn);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text, copyBtn);
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(text, copyBtn) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // 화면에 보이지 않게 설정
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccess(copyBtn);
+                } else {
+                    showCopyError();
+                }
+            } catch (err) {
+                showCopyError();
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        function showCopySuccess(copyBtn) {
+            if (copyBtn) {
+                const originalText = copyBtn.textContent;
+                const originalBg = copyBtn.style.background;
+                
+                copyBtn.textContent = '✅ 복사됨';
+                copyBtn.style.background = 'linear-gradient(45deg, #2ed573, #7bed9f)';
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = originalBg || 'linear-gradient(45deg, #ff4757, #ff6b7a)';
+                }, 1500);
+            }
+        }
+        
+        function showCopyError() {
+            alert('복사에 실패했습니다. 코드를 수동으로 선택해서 복사해주세요.');
+        }
+        
+        function highlightCode(code) {
+            // HTML 이스케이프
+            code = code
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            
+            return code
+                // 주석 하이라이팅 (한 줄 주석)
+                .replace(/(\/\/.*$)/gm, '<span class="comment">$1</span>')
+                // 주석 하이라이팅 (여러 줄 주석)
+                .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="comment">$1</span>')
+                // 문자열 하이라이팅 (작은따옴표, 큰따옴표, 백틱)
+                .replace(/('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*`)/g, '<span class="string">$1</span>')
+                // 숫자 하이라이팅 (정수와 소수)
+                .replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="number">$1</span>')
+                // 키워드 하이라이팅
+                .replace(/\b(function|const|let|var|if|else|for|while|do|try|catch|finally|return|break|continue|switch|case|default|new|this|typeof|instanceof|in|of|class|extends|import|export|async|await|yield|throw|delete|void|null|undefined|true|false)\b/g, '<span class="keyword">$1</span>')
+                // 내장 객체 하이라이팅
+                .replace(/\b(console|window|document|localStorage|sessionStorage|Array|Object|String|Number|Boolean|Date|RegExp|Math|JSON|Promise|Error|setTimeout|setInterval|clearTimeout|clearInterval|alert)\b/g, '<span class="keyword">$1</span>')
+                // 함수명 하이라이팅 (함수 정의와 호출)
+                .replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g, '<span class="function">$1</span>')
+                // 속성 접근 하이라이팅
+                .replace(/\.([a-zA-Z_$][a-zA-Z0-9_$]*)/g, '.<span class="property">$1</span>')
+                // 연산자 하이라이팅
+                .replace(/(\+\+|--|===|!==|==|!=|&lt;=|&gt;=|&&|\|\||&lt;|&gt;|\+|\-|\*|\/|%|=|\+=|\-=|\*=|\/=|%=|\?|:)/g, '<span class="operator">$1</span>')
+                // 괄호와 중괄호 하이라이팅
+                .replace(/([{}()\[\]])/g, '<span class="bracket">$1</span>')
+                // 세미콜론과 쉼표
+                .replace(/([;,])/g, '<span class="punctuation">$1</span>');
+        }
+    </script>
+</body>
+</html>
